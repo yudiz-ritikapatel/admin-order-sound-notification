@@ -68,12 +68,7 @@ $enable = $block->getEnable();
                 });
                 //Show successfully for submit message
                 ajaxRequest.done(function(response, textStatus, jqXHR) {
-                    console.log(response);
-                    console.log("ffff");
-                    console.log(textStatus);
-                    console.log(jqXHR);
                     if (response.success == 200) {
-                        console.log(sound_play);
                         if (sound_play == 'speech') {
                             playSpeech(response.message);
                         } else {
@@ -85,8 +80,8 @@ $enable = $block->getEnable();
                 //On failure of request this function will be called
                 ajaxRequest.fail(function() {
                     //show error
-                    $("#ajaxResponse").html('Oops, An error occured, please try again later!');
-                    $('#loader').hide();
+                    // $("#ajaxResponse").html('Oops, An error occured, please try again later!');
+                    // $('#loader').hide();
                 });
 
                 setTimeout(function() {
@@ -95,7 +90,6 @@ $enable = $block->getEnable();
             }
 
             function playAudio() {
-                console.log("playAudio");
                 var x = document.getElementById("playOrderAudio");
                 document.getElementById('playOrderAudio').muted = false;
                 document.getElementById("playOrderAudio").play();
@@ -115,7 +109,6 @@ $enable = $block->getEnable();
                 speech.voice = voices[33];
                 speech.text = speech_text;
                 window.speechSynthesis.speak(speech);
-                // console.log(speech);
             }
         });
     </script>
