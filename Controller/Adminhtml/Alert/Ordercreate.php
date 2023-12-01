@@ -34,6 +34,11 @@ class Ordercreate extends Action
      */
     protected $logger;
 
+      /**
+     * @var\Magento\Sales\Model\ResourceModel\Order\CollectionFactory
+     */
+    protected $lastOrderFactory;
+
     /**
      * Constructor
      *
@@ -41,17 +46,20 @@ class Ordercreate extends Action
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
      * @param \Yudiz\Ordernotification\Model\ResourceModel\Ordernotification\CollectionFactory $collectionFactory
      * @param \Psr\Log\LoggerInterface $logger
+     * @param \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $lastOrderFactory
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Yudiz\Ordernotification\Model\ResourceModel\Ordernotification\CollectionFactory $collectionFactory,
-        \Psr\Log\LoggerInterface $logger
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Sales\Model\ResourceModel\Order\CollectionFactory $lastOrderFactory
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
         $this->logger = $logger;
         $this->collectionFactory = $collectionFactory;
+        $this->lastOrderFactory = $lastOrderFactory;
     }
 
     /**
@@ -61,27 +69,22 @@ class Ordercreate extends Action
      */
     public function execute()
     {
-        // $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/ordernotification.log');
-        //             $logger = new \Zend_Log();
-        //             $logger->addWriter($writer);
-        //             $logger->info();
-        //             // die("ff");
-
         $data = [
             'success' => 200,
             'message' => __("Play sound"),
         ];
 
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $orderDatamodel = $objectManager->get(\Magento\Sales\Model\Order::class)->getCollection()->getLastItem();
-        $orderId = $orderDatamodel->getId(); //orders Id
+        $lastOrder = $this->lastOrderFactory->create();
+        $lastOrder->getSelect()->order('entity_id DESC')->limit(1);
+        $lastOrder = $lastOrder->getFirstItem();
+        $orderId = $lastOrder->getId(); // Last order ID
 
         $collection = $this->collectionFactory->create(); // order notification custom
         $orderNotificationFirstItem = $collection->getFirstItem();
 
         $text = "";
-        $text = "New order " . $orderDatamodel->getIncrementId() . " placed by ";
-        $text .= $orderDatamodel->getCustomerFirstname() . " " . $orderDatamodel->getCustomerLastname();
+        $text = "New order " . $lastOrder->getIncrementId() . " placed by ";
+        $text .= $lastOrder->getCustomerFirstname() . " " . $lastOrder->getCustomerLastname();
         $data['message'] = $text;
 
         if ($orderNotificationFirstItem) {
@@ -89,8 +92,8 @@ class Ordercreate extends Action
                 $data['success'] = 413;
                 $data['message'] = __("Not Play sound");
             } else {
-                if ($orderDatamodel->getStatus() == 'payment_review' ||
-                    $orderDatamodel->getStatus() == 'pending_payment'
+                if ($lastOrder->getStatus() == 'payment_review' ||
+                    $lastOrder->getStatus() == 'pending_payment'
                 ) {
                     $data['success'] = 413;
                     $data['message'] = __("Not Play sound, payment remain");
@@ -100,12 +103,16 @@ class Ordercreate extends Action
                     $orderNotificationFirstItem->save();
                     $data['success'] = 200;
                     $data['message'] = $text;
+   
+                    //show log
+                    // $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/ordernotification.log');
+                    // $logger = new \Zend_Log();
+                    // $logger->addWriter($writer);
                     // $logger->info(json_encode(["data" => $data, 'orderId' => $orderId]));
                 }
             }
         }
         //Send response to Ajax query
-        //$data = $orderId;
         $result = $this->resultJsonFactory->create();
         return $result->setData($data);
     }

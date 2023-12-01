@@ -16,6 +16,6 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
         <add id="Yudiz_Ordernotification::ordernotification" title="Yudiz OrderNotification" module="Yudiz_Ordernotification" sortOrder="100" parent="Yudiz_Core::manager" resource="Yudiz_Ordernotification::ordernotification"/>
-        <add id="Yudiz_Ordernotification::configuration" title="Configuration" module="Yudiz_Ordernotification" sortOrder="1000" resource="Yudiz_Ordernotification::configuration" action="admin/system_config/edit/section/ordernotification/" parent="Yudiz_Ordernotification::ordernotification"/>
+        <add id="Yudiz_Ordernotification::configuration" title="Configure OrderNotification" module="Yudiz_Ordernotification" sortOrder="1000" resource="Yudiz_Ordernotification::configuration" action="admin/system_config/edit/section/ordernotification/" parent="Yudiz_Ordernotification::ordernotification"/>
     </menu>
 </config>
