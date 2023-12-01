@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Yudiz
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Yudiz
+ * @package     Yudiz_Ordernotification
+ * @copyright   Copyright (c) 2023 Yudiz (https://www.Yudiz.com/)
+ */
 /** @var \Yudiz\Ordernotification\Block\Adminhtml\OrderAlert $block */
 $enable = $block->getEnable();
 ?>
@@ -88,6 +100,7 @@ $enable = $block->getEnable();
                 document.getElementById('playOrderAudio').muted = false;
                 document.getElementById("playOrderAudio").play();
             }
+
             function playSpeech(speech_text = '') {
                 let speech = new SpeechSynthesisUtterance();
                 speech.lang = "en";

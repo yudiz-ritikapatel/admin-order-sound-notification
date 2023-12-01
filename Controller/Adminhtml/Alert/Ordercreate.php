@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Yudiz
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Yudiz
+ * @package     Yudiz_Ordernotification
+ * @copyright   Copyright (c) 2023 Yudiz (https://www.Yudiz.com/)
+ */
+
 namespace Yudiz\Ordernotification\Controller\Adminhtml\Alert;
 
 use Magento\Backend\App\Action;
@@ -76,8 +89,7 @@ class Ordercreate extends Action
                 $data['success'] = 413;
                 $data['message'] = __("Not Play sound");
             } else {
-                if (
-                    $orderDatamodel->getStatus() == 'payment_review' ||
+                if ($orderDatamodel->getStatus() == 'payment_review' ||
                     $orderDatamodel->getStatus() == 'pending_payment'
                 ) {
                     $data['success'] = 413;
